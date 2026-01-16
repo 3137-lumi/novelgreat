@@ -19,10 +19,8 @@ export default function Home() {
   const [activeTab, setActiveTab] = useState<TabId>('all');
   const [filters, setFilters] = useState({
     provider: [] as string[], // Changed from string to string[]
-    modelOwner: [] as string[], // Changed from string to string[]
-    specialty: [] as string[], // Changed from string to string[]
+    series: [] as string[], // Changed from string to string[]
     sortBy: 'default',
-    searchQuery: '',
   });
 
   // Inject metadata
@@ -54,7 +52,7 @@ export default function Home() {
   }, [activeTab, allModels]);
 
   useEffect(() => {
-    setFilters(prev => ({ ...prev, provider: [], modelOwner: [], specialty: [] }));
+    setFilters(prev => ({ ...prev, provider: [], series: [] }));
   }, [activeTab]);
 
   const handleFilterChange = (key: string, value: any) => {
@@ -74,21 +72,8 @@ export default function Home() {
   );
 
 
-  const specialties = useMemo(() => {
-    const all = currentModels.flatMap((m) => m.specialties);
-    return Array.from(new Set(all)).sort();
-  }, [currentModels]);
-
   const filteredModels = useMemo(() => {
     let result = [...currentModels];
-
-    const q = filters.searchQuery.trim().toLowerCase();
-    if (q) {
-      result = result.filter((m) => {
-        const hay = `${m.id} ${m.name} ${m.provider} ${m.description ?? ''}`.toLowerCase();
-        return hay.includes(q);
-      });
-    }
 
     // Filter by Supplier (Station)
     if (filters.provider.length > 0) {
@@ -96,28 +81,17 @@ export default function Home() {
     }
 
     // Filter by Model Owner
-    if (filters.modelOwner.length > 0) {
-      result = result.filter((m) => filters.modelOwner.includes(m.provider));
-    }
-
-    // Filter by Specialty
-    if (filters.specialty.length > 0) {
-      // Logic: OR (match any selected specialty) or AND (match all)? 
-      // Usually filters are OR within a category, but for specialties "Has X OR Y" is common.
-      result = result.filter((m) => 
-        filters.specialty.some(s => m.specialties.includes(s))
-      );
+    if (filters.series.length > 0) {
+      result = result.filter((m) => filters.series.includes(m.provider));
     }
 
     if (filters.sortBy === 'price_asc') {
       const metric = (m) => (m.priceUnit === 'per_call' ? m.inputPrice : m.outputPrice);
-      result.sort((a, b) => metric(a) - metric(b));
+        result.sort((a, b) => metric(a) - metric(b));
     } else if (filters.sortBy === 'price_desc') {
       const metric = (m) => (m.priceUnit === 'per_call' ? m.inputPrice : m.outputPrice);
       result.sort((a, b) => metric(b) - metric(a));
     } else if (filters.sortBy === 'launch_date_desc') {
-       // Mock sort for now as we don't have real dates yet everywhere, but logic is here
-       // Assuming launchDate is YYYY-MM-DD string
        result.sort((a, b) => (b.launchDate || '').localeCompare(a.launchDate || ''));
     } else if (filters.sortBy === 'launch_date_asc') {
        result.sort((a, b) => (a.launchDate || '').localeCompare(b.launchDate || ''));
@@ -160,17 +134,10 @@ export default function Home() {
         </header>
 
         <FilterBar
-          providers={suppliers} // Mapping 'suppliers' (Stations) to 'providers' prop of FilterBar for now
-          series={modelOwners}  // Mapping 'modelOwners' (Providers) to 'series' prop of FilterBar for now
-          specialties={specialties}
-          filters={{
-             ...filters,
-             series: filters.modelOwner // Map back for FilterBar compatibility until we update it
-          }}
-          onFilterChange={(key, value) => {
-             if (key === 'series') handleFilterChange('modelOwner', value);
-             else handleFilterChange(key, value);
-          }}
+          providers={suppliers}
+          series={modelOwners}
+          filters={filters}
+          onFilterChange={handleFilterChange}
         />
 
         <ModelTable models={filteredModels} />

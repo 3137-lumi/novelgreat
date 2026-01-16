@@ -1,16 +1,13 @@
 import React from 'react';
-import { Filter, Search, ArrowUpDown, Check } from 'lucide-react';
+import { Filter } from 'lucide-react';
 
 interface FilterBarProps {
-  providers: string[]; // Suppliers (e.g. DMXAPI)
-  series: string[];    // Model Owners (e.g. OpenAI)
-  specialties: string[];
+  providers: string[];
+  series: string[];
   filters: {
     provider: string[];
     series: string[];
-    specialty: string[];
-    sortBy: string; // 'default' | 'price_asc' | 'price_desc' | 'launch_date_desc' | 'launch_date_asc'
-    searchQuery: string;
+    sortBy: string;
   };
   onFilterChange: (key: string, value: any) => void;
 }
@@ -18,12 +15,10 @@ interface FilterBarProps {
 export const FilterBar: React.FC<FilterBarProps> = ({
   providers,
   series,
-  specialties,
   filters,
   onFilterChange,
 }) => {
-  
-  const toggleSelection = (key: 'provider' | 'series' | 'specialty', item: string) => {
+  const toggleSelection = (key: 'provider' | 'series', item: string) => {
     const current = filters[key];
     if (item === 'all') {
       onFilterChange(key, []);
@@ -39,17 +34,12 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     onFilterChange(key, next);
   };
 
-  const isSelected = (key: 'provider' | 'series' | 'specialty', item: string) => {
+  const isSelected = (key: 'provider' | 'series', item: string) => {
     if (item === 'all') return filters[key].length === 0;
     return filters[key].includes(item);
   };
 
   const handleSort = (field: 'price' | 'launch_date') => {
-    // Toggle logic: default -> asc -> desc -> default (or just asc/desc switch)
-    // Current mapping:
-    // price: price_asc, price_desc
-    // launch_date: launch_date_desc (newest first usually), launch_date_asc
-    
     const currentSort = filters.sortBy;
     let nextSort = 'default';
 
@@ -79,7 +69,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     return <span className="text-slate-300 ml-1">↕</span>;
   };
 
-  const renderRow = (label: string, items: string[], stateKey: 'provider' | 'series' | 'specialty') => (
+  const renderRow = (label: string, items: string[], stateKey: 'provider' | 'series') => (
     <div className="flex items-start gap-4 py-2">
       <span className="text-slate-500 font-medium text-sm whitespace-nowrap mt-1 w-16 flex-shrink-0">{label}</span>
       <div className="flex flex-wrap gap-2">
@@ -112,29 +102,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
 
   return (
     <div className="bg-white p-6 rounded-xl shadow-sm border border-slate-200 mb-8">
-      {/* Search Row */}
-      <div className="mb-6 max-w-md">
-        <div className="relative">
-          <div className="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none">
-            <Search size={18} className="text-slate-400" />
-          </div>
-          <input
-            type="text"
-            value={filters.searchQuery}
-            onChange={(e) => onFilterChange('searchQuery', e.target.value)}
-            placeholder="搜索模型名称或ID..."
-            className="pl-10 pr-4 py-2.5 w-full bg-slate-50 border border-slate-200 rounded-lg text-sm text-slate-900 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-shadow"
-          />
-        </div>
-      </div>
-
       <div className="space-y-2">
         {renderRow('供应商', providers, 'provider')}
         {renderRow('模型方', series, 'series')}
-        {/* We can hide specialties row if user wants simpler UI, but user said "simplify specialties content", not hide row. Let's keep it but simplified. */}
-        {renderRow('擅长点', specialties, 'specialty')}
-        
-        {/* Sort Row */}
+
         <div className="flex items-center gap-4 py-2 mt-2 border-t border-slate-100 pt-4">
           <span className="text-slate-500 font-medium text-sm whitespace-nowrap w-16 flex-shrink-0">排序</span>
           <div className="flex flex-wrap gap-2">
