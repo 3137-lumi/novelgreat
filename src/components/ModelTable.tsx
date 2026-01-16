@@ -71,7 +71,14 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
                 <tr key={model.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <div className="flex flex-col">
-                      <span className="text-xs font-medium text-slate-500 mb-1">{model.provider}</span>
+                      <span className="text-xs font-medium text-slate-500 mb-1">
+                        {model.stationTag && (
+                          <span className="inline-block mr-2 px-1.5 py-0.5 rounded-sm bg-slate-100 text-slate-600 border border-slate-200">
+                            {model.stationTag}
+                          </span>
+                        )}
+                        {model.provider}
+                      </span>
                       <span className="font-semibold text-slate-900">{model.name}</span>
                       <span className="text-xs text-slate-400 mt-1 line-clamp-1">{model.description}</span>
                     </div>

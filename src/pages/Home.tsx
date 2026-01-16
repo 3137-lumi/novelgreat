@@ -16,16 +16,25 @@ type Station = {
 
 const STATIONS: Station[] = [
   {
+    id: 'all',
+    name: '全部',
+    description: '聚合所有站点的模型',
+    models: [
+      ...enrichDMXAPIModels(DMXAPI_MODELS, GEMINI_SUPPLIER_MODELS).map(m => ({ ...m, stationTag: 'DMXAPI' })),
+      ...GEMINI_SUPPLIER_MODELS.map(m => ({ ...m, stationTag: 'Gemini 供应商' }))
+    ],
+  },
+  {
     id: 'dmxapi',
     name: 'DMXAPI',
     description: '包含 GPT、Claude、Gemini、Grok 等多供应商模型配置',
-    models: enrichDMXAPIModels(DMXAPI_MODELS, GEMINI_SUPPLIER_MODELS),
+    models: enrichDMXAPIModels(DMXAPI_MODELS, GEMINI_SUPPLIER_MODELS).map(m => ({ ...m, stationTag: 'DMXAPI' })),
   },
   {
     id: 'gemini_supplier',
     name: 'Gemini 供应商',
     description: 'Gemini 模型（含擅长点与特点）',
-    models: GEMINI_SUPPLIER_MODELS,
+    models: GEMINI_SUPPLIER_MODELS.map(m => ({ ...m, stationTag: 'Gemini 供应商' })),
   },
   {
     id: 'other',
@@ -36,7 +45,7 @@ const STATIONS: Station[] = [
 ];
 
 export default function Home() {
-  const [activeStationId, setActiveStationId] = useState(STATIONS[0].id);
+  const [activeStationId, setActiveStationId] = useState('dmxapi');
   const [filters, setFilters] = useState({
     provider: 'all',
     series: 'all',

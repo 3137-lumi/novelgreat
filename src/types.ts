@@ -11,5 +11,6 @@ export interface ModelInfo {
   outputPrice: number; // Price per 1M tokens in USD
   priceUnit?: 'per_1m' | 'per_call';
   specialties: string[];
+  stationTag?: string; // e.g. 'DMXAPI' or 'Gemini 供应商'
   parameters: ModelParameter; // The JSON blob to copy
 }
