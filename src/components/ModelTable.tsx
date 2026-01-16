@@ -10,17 +10,12 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
   const calcRealMultiplier = (model: ModelInfo) => {
+    // Keep calculation based on USD to maintain the 'x' scale consistency
     const input = model.inputPrice;
     const output = model.priceUnit === 'per_call' ? 0 : model.outputPrice;
     const value = input * 0.3 + output * 0.7;
     if (!Number.isFinite(value)) return null;
     return value;
-  };
-
-  const formatRealMultiplier = (model: ModelInfo) => {
-    const value = calcRealMultiplier(model);
-    if (value === null) return '-';
-    return value.toFixed(2);
   };
 
   const formatRealDisplay = (model: ModelInfo) => {
@@ -34,10 +29,12 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
     return `${text}x`;
   };
 
+  const formatRMB = (usdPrice: number) => {
+    return `¥${(usdPrice * 7).toFixed(4)}`; // precision for cheap models
+  };
+
   const handleCopy = async (model: ModelInfo) => {
     try {
-      // Copy the model parameter ID (e.g. 'gpt-4o') instead of the full JSON
-      // If parameters.model exists, use it, otherwise use the top-level id.
       const textToCopy = typeof model.parameters.model === 'string' 
         ? model.parameters.model 
         : model.id;
@@ -56,11 +53,13 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
         <table className="w-full text-left border-collapse">
           <thead>
             <tr className="bg-slate-50 border-b border-slate-200 text-xs uppercase tracking-wider text-slate-500 font-semibold">
-              <th className="px-6 py-4">供应商 / 模型</th>
-              <th className="px-6 py-4 w-1/3">模型特征</th>
+              <th className="px-6 py-4">供应商</th>
+              <th className="px-6 py-4">模型名</th>
+              <th className="px-6 py-4">模型ID</th>
+              <th className="px-6 py-4 text-center">思考</th>
               <th className="px-6 py-4 text-right">输入价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
               <th className="px-6 py-4 text-right">输出价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
-              <th className="px-6 py-4 text-right">真实消耗倍率</th>
+              <th className="px-6 py-4 text-center">上线时间</th>
               <th className="px-6 py-4 text-right">真实展示</th>
               <th className="px-6 py-4 text-center">操作</th>
             </tr>
@@ -70,45 +69,40 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               models.map((model) => (
                 <tr key={model.id} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
-                    <div className="flex flex-col">
-                      <span className="text-xs font-medium text-slate-500 mb-1">
-                        {model.stationTag && (
-                          <span className="inline-block mr-2 px-1.5 py-0.5 rounded-sm bg-slate-100 text-slate-600 border border-slate-200">
-                            {model.stationTag}
-                          </span>
-                        )}
-                        {model.provider}
-                      </span>
-                      <span className="font-semibold text-slate-900">{model.name}</span>
-                      <span className="text-xs text-slate-400 mt-1 line-clamp-1">{model.description}</span>
-                    </div>
+                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                      {model.stationTag || 'Unknown'}
+                    </span>
                   </td>
                   <td className="px-6 py-4">
-                    <div className="flex flex-wrap gap-2">
-                      {model.specialties.map((specialty, idx) => (
-                        <span
-                          key={idx}
-                          className="px-2 py-0.5 rounded text-xs font-medium bg-indigo-50 text-indigo-700 border border-indigo-100 whitespace-nowrap"
-                        >
-                          {specialty}
-                        </span>
-                      ))}
-                    </div>
+                     <div className="flex flex-col">
+                        <span className="font-semibold text-slate-900">{model.name}</span>
+                        <span className="text-xs text-slate-400">{model.provider}</span>
+                     </div>
+                  </td>
+                  <td className="px-6 py-4 text-xs font-mono text-slate-500">
+                    {model.id}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {model.isThinking ? (
+                        <span className="text-green-500 font-bold">✓</span>
+                    ) : (
+                        <span className="text-slate-300">-</span>
+                    )}
                   </td>
                   <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
-                    {model.priceUnit === 'per_call' ? `$${model.inputPrice.toFixed(2)}/次` : `$${model.inputPrice.toFixed(2)}`}
+                    {model.priceUnit === 'per_call' ? `${formatRMB(model.inputPrice)}/次` : formatRMB(model.inputPrice)}
                   </td>
                   <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
                     {model.priceUnit === 'per_call' ? (
                       <span className="text-slate-400">-</span>
                     ) : (
-                      `$${model.outputPrice.toFixed(2)}`
+                      formatRMB(model.outputPrice)
                     )}
                   </td>
-                  <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
-                    {formatRealMultiplier(model)}
+                  <td className="px-6 py-4 text-center text-sm text-slate-500">
+                    {model.launchDate || '-'}
                   </td>
-                  <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
+                  <td className="px-6 py-4 text-right font-mono text-sm text-slate-700 font-bold">
                     {formatRealDisplay(model)}
                   </td>
                   <td className="px-6 py-4 text-center">
@@ -122,15 +116,9 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
                       title="复制模型参数ID"
                     >
                       {copiedId === model.id ? (
-                        <>
-                          <Check size={14} />
-                          <span>已复制</span>
-                        </>
+                        <Check size={14} />
                       ) : (
-                        <>
-                          <Copy size={14} />
-                          <span>复制ID</span>
-                        </>
+                        <Copy size={14} />
                       )}
                     </button>
                   </td>
@@ -138,7 +126,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={7} className="px-6 py-12 text-center text-slate-500">
+                <td colSpan={9} className="px-6 py-12 text-center text-slate-500">
                   没有找到匹配的模型。
                 </td>
               </tr>

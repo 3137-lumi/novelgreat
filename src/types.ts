@@ -12,5 +12,8 @@ export interface ModelInfo {
   priceUnit?: 'per_1m' | 'per_call';
   specialties: string[];
   stationTag?: string; // e.g. 'DMXAPI' or 'Gemini 供应商'
+  region?: 'domestic' | 'foreign'; // Region classification
+  launchDate?: string; // YYYY-MM-DD
+  isThinking?: boolean; // Whether it supports thinking/reasoning
   parameters: ModelParameter; // The JSON blob to copy
 }

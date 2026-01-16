@@ -61,10 +61,10 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         onChange={(e) => onFilterChange('series', e.target.value)}
         className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent min-w-[140px]"
       >
-        <option value="all">所有模型系列</option>
+        <option value="all">所有模型方</option>
         {series.map((s) => (
           <option key={s} value={s}>
-            {s} 系列
+            {s}
           </option>
         ))}
       </select>
@@ -93,6 +93,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
           className="px-3 py-2 bg-slate-50 border border-slate-200 rounded-md text-sm text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-transparent flex-grow md:flex-grow-0 md:min-w-[180px]"
         >
           <option value="default">默认</option>
+          <option value="launch_date">上线时间</option>
           <option value="price_asc">价格: 从低到高</option>
           <option value="price_desc">价格: 从高到低</option>
         </select>
