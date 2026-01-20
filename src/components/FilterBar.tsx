@@ -32,7 +32,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
       );
       return;
     }
-    onFilterChange(key, [...current, item]);
+    onFilterChange(key, [item, ...current]);
   };
 
   const isSelected = (key: 'provider' | 'series', item: string) => {

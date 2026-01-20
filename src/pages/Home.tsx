@@ -85,6 +85,29 @@ export default function Home() {
       result = result.filter((m) => filters.series.includes(m.provider));
     }
 
+    if (filters.sortBy === 'default') {
+      const supplierOrder = new Map(filters.provider.map((x, i) => [x, i]));
+      const ownerOrder = new Map(filters.series.map((x, i) => [x, i]));
+
+      if (filters.provider.length > 0 || filters.series.length > 0) {
+        result.sort((a, b) => {
+          if (filters.provider.length > 0) {
+            const sa = supplierOrder.get(a.stationTag || 'Unknown') ?? Number.POSITIVE_INFINITY;
+            const sb = supplierOrder.get(b.stationTag || 'Unknown') ?? Number.POSITIVE_INFINITY;
+            if (sa !== sb) return sa - sb;
+          }
+
+          if (filters.series.length > 0) {
+            const oa = ownerOrder.get(a.provider) ?? Number.POSITIVE_INFINITY;
+            const ob = ownerOrder.get(b.provider) ?? Number.POSITIVE_INFINITY;
+            if (oa !== ob) return oa - ob;
+          }
+
+          return 0;
+        });
+      }
+    }
+
     if (filters.sortBy === 'price_asc') {
       const metric = (m) => (m.priceUnit === 'per_call' ? m.inputPrice : m.outputPrice);
         result.sort((a, b) => metric(a) - metric(b));
