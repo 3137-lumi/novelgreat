@@ -25,11 +25,14 @@ export const FilterBar: React.FC<FilterBarProps> = ({
     }
 
     const current = filters[key];
-    if (current.length === 1 && current[0] === item) {
-      onFilterChange(key, []);
+    if (current.includes(item)) {
+      onFilterChange(
+        key,
+        current.filter((x) => x !== item)
+      );
       return;
     }
-    onFilterChange(key, [item]);
+    onFilterChange(key, [...current, item]);
   };
 
   const isSelected = (key: 'provider' | 'series', item: string) => {
