@@ -19,19 +19,17 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   onFilterChange,
 }) => {
   const toggleSelection = (key: 'provider' | 'series', item: string) => {
-    const current = filters[key];
     if (item === 'all') {
       onFilterChange(key, []);
       return;
     }
-    
-    let next: string[];
-    if (current.includes(item)) {
-      next = current.filter(i => i !== item);
-    } else {
-      next = [...current, item];
+
+    const current = filters[key];
+    if (current.length === 1 && current[0] === item) {
+      onFilterChange(key, []);
+      return;
     }
-    onFilterChange(key, next);
+    onFilterChange(key, [item]);
   };
 
   const isSelected = (key: 'provider' | 'series', item: string) => {
