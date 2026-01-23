@@ -45,21 +45,21 @@ export default function Home() {
 
     const tongyi = TONGYI_SUPPLIER_MODELS.map((m) => ({
       ...m,
-      stationTag: '通义千问',
+      stationTag: 'tongyi',
       region: 'domestic' as const,
       isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
     }));
 
     const qianfan = QIANFAN_SUPPLIER_MODELS.map((m) => ({
       ...m,
-      stationTag: '百度千帆',
+      stationTag: 'qianfan',
       region: 'domestic' as const,
       isThinking: m.isThinking ?? m.name.toLowerCase().includes('think'),
     }));
 
     const volcano = VOLCANO_SUPPLIER_MODELS.map((m) => ({
       ...m,
-      stationTag: '火山',
+      stationTag: 'volc',
       region: 'domestic' as const,
       isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
     }));
