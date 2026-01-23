@@ -51,10 +51,10 @@ export const ModelCard: React.FC<ModelCardProps> = ({ model }) => {
           <DollarSign size={18} className="text-slate-400 mt-0.5" />
           <div className="text-sm">
             <div className="text-slate-600">
-              <span className="font-medium text-slate-900">${model.inputPrice}</span> / 1M input
+              <span className="font-medium text-slate-900">{model.inputPrice === null ? '-' : `$${model.inputPrice}`}</span> / 1M input
             </div>
             <div className="text-slate-600">
-              <span className="font-medium text-slate-900">${model.outputPrice}</span> / 1M output
+              <span className="font-medium text-slate-900">{model.outputPrice === null ? '-' : `$${model.outputPrice}`}</span> / 1M output
             </div>
           </div>
         </div>

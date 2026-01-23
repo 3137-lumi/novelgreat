@@ -11,6 +11,12 @@ const inferProvider = (modelId: string) => {
   if (id.startsWith('chatgpt')) return 'OpenAI';
   if (id.includes('dall-e') || id.startsWith('gpt-image')) return 'OpenAI';
   if (id.startsWith('text-embedding') || id.startsWith('whisper')) return 'OpenAI';
+  if (id.startsWith('qwen') || id.startsWith('qwq') || id.startsWith('qvq')) return '通义千问';
+  if (id.startsWith('deepseek')) return 'DeepSeek';
+  if (id.startsWith('glm')) return '智谱';
+  if (id.startsWith('kimi')) return '月之暗面';
+  if (id.startsWith('doubao')) return '火山';
+  if (id.startsWith('ernie') || id.startsWith('qianfan')) return '百度';
   return null;
 };
 

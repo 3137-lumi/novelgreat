@@ -13,6 +13,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
     // Keep calculation based on USD to maintain the 'x' scale consistency
     const input = model.inputPrice;
     const output = model.priceUnit === 'per_call' ? 0 : model.outputPrice;
+    if (input === null || output === null) return null;
     const value = input * 0.3 + output * 0.7;
     if (!Number.isFinite(value)) return null;
     return value;
@@ -29,7 +30,8 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
     return `${text}x`;
   };
 
-  const formatRMB = (usdPrice: number) => {
+  const formatRMB = (usdPrice: number | null) => {
+    if (usdPrice === null) return '-';
     return `¥${(usdPrice * 7).toFixed(4)}`; // precision for cheap models
   };
 
@@ -57,6 +59,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               <th className="px-6 py-4">模型名</th>
               <th className="px-6 py-4">模型ID</th>
               <th className="px-6 py-4 text-center">思考</th>
+              <th className="px-6 py-4">功能倾向</th>
               <th className="px-6 py-4 text-right">输入价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
               <th className="px-6 py-4 text-right">输出价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
               <th className="px-6 py-4 text-center">上线时间</th>
@@ -67,7 +70,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
           <tbody className="divide-y divide-slate-100">
             {models.length > 0 ? (
               models.map((model) => (
-                <tr key={model.id} className="hover:bg-slate-50/50 transition-colors">
+                <tr key={`${model.stationTag || 'Unknown'}:${model.id}`} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
                     <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
                       {model.stationTag || 'Unknown'}
@@ -89,8 +92,28 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
                         <span className="text-slate-300">-</span>
                     )}
                   </td>
+                  <td className="px-6 py-4">
+                    {Array.isArray(model.tendencies) && model.tendencies.length > 0 ? (
+                      <div className="flex flex-wrap gap-1.5">
+                        {model.tendencies.slice(0, 6).map((t) => (
+                          <span
+                            key={t}
+                            className="inline-flex items-center px-2 py-0.5 rounded-full text-xs bg-indigo-50 text-indigo-700 border border-indigo-100"
+                          >
+                            {t}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <span className="text-sm text-slate-300">-</span>
+                    )}
+                  </td>
                   <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
-                    {model.priceUnit === 'per_call' ? `${formatRMB(model.inputPrice)}/次` : formatRMB(model.inputPrice)}
+                    {model.priceUnit === 'per_call'
+                      ? model.inputPrice === null
+                        ? '-'
+                        : `${formatRMB(model.inputPrice)}/次`
+                      : formatRMB(model.inputPrice)}
                   </td>
                   <td className="px-6 py-4 text-right font-mono text-sm text-slate-700">
                     {model.priceUnit === 'per_call' ? (
@@ -126,7 +149,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={9} className="px-6 py-12 text-center text-slate-500">
+                <td colSpan={10} className="px-6 py-12 text-center text-slate-500">
                   没有找到匹配的模型。
                 </td>
               </tr>

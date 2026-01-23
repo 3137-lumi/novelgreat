@@ -7,10 +7,11 @@ export interface ModelInfo {
   name: string;
   provider: string;
   description?: string;
-  inputPrice: number; // Price per 1M tokens in USD
-  outputPrice: number; // Price per 1M tokens in USD
+  inputPrice: number | null; // Price per 1M tokens in USD
+  outputPrice: number | null; // Price per 1M tokens in USD
   priceUnit?: 'per_1m' | 'per_call';
   specialties: string[];
+  tendencies?: string[]; // 功能倾向（用于展示/筛选的偏好标签）
   stationTag?: string; // e.g. 'DMXAPI' or 'Gemini 供应商'
   region?: 'domestic' | 'foreign'; // Region classification
   launchDate?: string; // YYYY-MM-DD

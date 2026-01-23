@@ -4,6 +4,9 @@ import { FilterBar } from '../components/FilterBar';
 import { ModelTable } from '../components/ModelTable';
 import { DMXAPI_MODELS } from '../data/dmxapiModels';
 import { GEMINI_SUPPLIER_MODELS } from '../data/geminiSupplierModels';
+import { QIANFAN_SUPPLIER_MODELS } from '../data/qianfanSupplierModels';
+import { TONGYI_SUPPLIER_MODELS } from '../data/tongyiSupplierModels';
+import { VOLCANO_SUPPLIER_MODELS } from '../data/volcanoSupplierModels';
 import { enrichDMXAPIModels } from '../lib/enrichModels';
 import { normalizeSpecialties } from '../lib/normalizeSpecialties';
 
@@ -30,17 +33,38 @@ export default function Home() {
       stationTag: 'DMXAPI',
       region: 'foreign' as const,
       // Attempt to guess launch date or thinking from description/name if possible, otherwise undefined
-      isThinking: m.name.toLowerCase().includes('thinking') || m.specialties.includes('Thinking'),
+      isThinking: m.isThinking ?? (m.name.toLowerCase().includes('thinking') || m.specialties.includes('Thinking')),
     }));
     
     const gemini = GEMINI_SUPPLIER_MODELS.map(m => ({
       ...m,
       stationTag: 'Gemini',
       region: 'foreign' as const,
-      isThinking: m.name.toLowerCase().includes('thinking'),
+      isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
     }));
 
-    return [...dmx, ...gemini].map(m => ({
+    const tongyi = TONGYI_SUPPLIER_MODELS.map((m) => ({
+      ...m,
+      stationTag: '通义千问',
+      region: 'domestic' as const,
+      isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
+    }));
+
+    const qianfan = QIANFAN_SUPPLIER_MODELS.map((m) => ({
+      ...m,
+      stationTag: '百度千帆',
+      region: 'domestic' as const,
+      isThinking: m.isThinking ?? m.name.toLowerCase().includes('think'),
+    }));
+
+    const volcano = VOLCANO_SUPPLIER_MODELS.map((m) => ({
+      ...m,
+      stationTag: '火山',
+      region: 'domestic' as const,
+      isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
+    }));
+
+    return [...dmx, ...gemini, ...tongyi, ...qianfan, ...volcano].map(m => ({
       ...m,
       specialties: normalizeSpecialties(m.specialties)
     }));
@@ -110,10 +134,24 @@ export default function Home() {
 
     if (filters.sortBy === 'price_asc') {
       const metric = (m) => (m.priceUnit === 'per_call' ? m.inputPrice : m.outputPrice);
-        result.sort((a, b) => metric(a) - metric(b));
+      result.sort((a, b) => {
+        const ma = metric(a);
+        const mb = metric(b);
+        if (ma === null && mb === null) return 0;
+        if (ma === null) return 1;
+        if (mb === null) return -1;
+        return ma - mb;
+      });
     } else if (filters.sortBy === 'price_desc') {
       const metric = (m) => (m.priceUnit === 'per_call' ? m.inputPrice : m.outputPrice);
-      result.sort((a, b) => metric(b) - metric(a));
+      result.sort((a, b) => {
+        const ma = metric(a);
+        const mb = metric(b);
+        if (ma === null && mb === null) return 0;
+        if (ma === null) return 1;
+        if (mb === null) return -1;
+        return mb - ma;
+      });
     } else if (filters.sortBy === 'launch_date_desc') {
        result.sort((a, b) => (b.launchDate || '').localeCompare(a.launchDate || ''));
     } else if (filters.sortBy === 'launch_date_asc') {
