@@ -30,7 +30,7 @@ export default function Home() {
   const allModels = useMemo(() => {
     const dmx = enrichDMXAPIModels(DMXAPI_MODELS, GEMINI_SUPPLIER_MODELS).map(m => ({
       ...m,
-      stationTag: 'DMXAPI',
+      stationTag: 'dmxapi',
       region: 'foreign' as const,
       // Attempt to guess launch date or thinking from description/name if possible, otherwise undefined
       isThinking: m.isThinking ?? (m.name.toLowerCase().includes('thinking') || m.specialties.includes('Thinking')),
@@ -38,7 +38,7 @@ export default function Home() {
     
     const gemini = GEMINI_SUPPLIER_MODELS.map(m => ({
       ...m,
-      stationTag: 'Gemini',
+      stationTag: 'gemini',
       region: 'foreign' as const,
       isThinking: m.isThinking ?? m.name.toLowerCase().includes('thinking'),
     }));

@@ -16,5 +16,7 @@ export interface ModelInfo {
   region?: 'domestic' | 'foreign'; // Region classification
   launchDate?: string; // YYYY-MM-DD
   isThinking?: boolean; // Whether it supports thinking/reasoning
+  supportsThinkingMode?: boolean; // Whether it supports thinking mode toggle
+  defaultThinkingMode?: 'enabled' | 'disabled' | 'auto'; // Default thinking mode (when supported)
   parameters: ModelParameter; // The JSON blob to copy
 }

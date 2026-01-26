@@ -166,6 +166,25 @@ const parseYesNo = (value) => {
   return null;
 };
  
+const parseSupportsThinkingMode = (value) => {
+  const raw = String(value ?? '').trim();
+  if (!raw || raw === '-' || raw === '—') return null;
+  const v = raw.toLowerCase();
+  if (v.includes('不支持')) return false;
+  if (v.includes('enabled') || v.includes('disabled') || v.includes('auto')) return true;
+  return parseYesNo(raw);
+};
+
+const parseDefaultThinkingMode = (value) => {
+  const raw = String(value ?? '').trim();
+  if (!raw || raw === '-' || raw === '—') return undefined;
+  const v = raw.toLowerCase();
+  if (v.includes('enabled')) return 'enabled';
+  if (v.includes('disabled')) return 'disabled';
+  if (v.includes('auto')) return 'auto';
+  return undefined;
+};
+
 const pickFirst = (obj, keys) => {
   for (const k of keys) {
     if (Object.prototype.hasOwnProperty.call(obj, k)) return obj[k];
@@ -284,6 +303,12 @@ const parseModelsFromXlsx = async ({ inputXlsxPath, currency }) => {
     const thinkingValue = pickFirst(r, ['是否思考模式', '思考模式', '是否有深度思考']);
     const isThinking = parseYesNo(thinkingValue);
  
+    const supportsThinkingModeValue = pickFirst(r, ['是否支持思考模式', '支持思考模式', '思考模式支持', '思考模式支持类型']);
+    const supportsThinkingMode = supportsThinkingModeValue === undefined ? undefined : parseSupportsThinkingMode(supportsThinkingModeValue) ?? undefined;
+
+    const defaultThinkingModeValue = pickFirst(r, ['默认思考模式']);
+    const defaultThinkingMode = defaultThinkingModeValue === undefined ? undefined : parseDefaultThinkingMode(defaultThinkingModeValue);
+
     const tendencyValue = pickFirst(r, [
       '功能倾向',
       '能力类型',
@@ -314,6 +339,8 @@ const parseModelsFromXlsx = async ({ inputXlsxPath, currency }) => {
       tendencies: tendencyTags,
       parameters: { model: modelId },
       isThinking: isThinking ?? undefined,
+      supportsThinkingMode,
+      defaultThinkingMode,
     });
   }
  

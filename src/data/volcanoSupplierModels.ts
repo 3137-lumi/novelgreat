@@ -27,7 +27,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-8-251228"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "glm-4-7-251222",
@@ -51,7 +53,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "glm-4-7-251222"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-code-preview-251028",
@@ -79,7 +83,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-code-preview-251028"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-lite-251015",
@@ -107,7 +113,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-lite-251015"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-flash-250828",
@@ -137,7 +145,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-flash-250828"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-vision-250815",
@@ -167,7 +177,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-vision-250815"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-251015",
@@ -195,7 +207,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-251015"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-250615",
@@ -223,7 +237,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-250615"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-1-6-flash-250615",
@@ -253,7 +269,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "doubao-seed-1-6-flash-250615"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "doubao-seed-translation-250915",
@@ -397,7 +415,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "deepseek-v3-2-251201"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "disabled"
   },
   {
     "id": "deepseek-v3-1-terminus",
@@ -421,7 +441,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "deepseek-v3-1-terminus"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "deepseek-v3-1-250821",
@@ -445,7 +467,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "deepseek-v3-1-250821"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "disabled"
   },
   {
     "id": "deepseek-v3-250324",
@@ -489,7 +513,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "deepseek-r1-250528"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "kimi-k2-thinking-251104",
@@ -513,7 +539,9 @@ export const VOLCANO_SUPPLIER_MODELS: ModelInfo[] = [
     "parameters": {
       "model": "kimi-k2-thinking-251104"
     },
-    "isThinking": true
+    "isThinking": true,
+    "supportsThinkingMode": true,
+    "defaultThinkingMode": "enabled"
   },
   {
     "id": "kimi-k2-250905",

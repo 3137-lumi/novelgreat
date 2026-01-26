@@ -35,6 +35,13 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
     return `¥${(usdPrice * 7).toFixed(4)}`; // precision for cheap models
   };
 
+  const formatDefaultThinkingMode = (mode: ModelInfo['defaultThinkingMode']) => {
+    if (mode === 'enabled') return '开';
+    if (mode === 'disabled') return '关';
+    if (mode === 'auto') return '自动';
+    return '-';
+  };
+
   const handleCopy = async (model: ModelInfo) => {
     try {
       const textToCopy = typeof model.parameters.model === 'string' 
@@ -59,6 +66,8 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               <th className="px-6 py-4">模型名</th>
               <th className="px-6 py-4">模型ID</th>
               <th className="px-6 py-4 text-center">思考</th>
+              <th className="px-6 py-4 text-center">支持思考模式</th>
+              <th className="px-6 py-4 text-center">默认思考模式</th>
               <th className="px-6 py-4">功能倾向</th>
               <th className="px-6 py-4 text-right">输入价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
               <th className="px-6 py-4 text-right">输出价格 <span className="normal-case font-normal text-slate-400">(/1M)</span></th>
@@ -90,6 +99,32 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
                         <span className="text-green-500 font-bold">✓</span>
                     ) : (
                         <span className="text-slate-300">-</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {model.stationTag === 'volc' ? (
+                      model.supportsThinkingMode === true ? (
+                        <span className="text-green-500 font-bold">✓</span>
+                      ) : model.supportsThinkingMode === false ? (
+                        <span className="text-slate-500 font-bold">×</span>
+                      ) : (
+                        <span className="text-slate-300">-</span>
+                      )
+                    ) : (
+                      <span className="text-slate-300">-</span>
+                    )}
+                  </td>
+                  <td className="px-6 py-4 text-center">
+                    {model.stationTag === 'volc' ? (
+                      model.supportsThinkingMode === false ? (
+                        <span className="text-slate-300">-</span>
+                      ) : (
+                        <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                          {formatDefaultThinkingMode(model.defaultThinkingMode)}
+                        </span>
+                      )
+                    ) : (
+                      <span className="text-slate-300">-</span>
                     )}
                   </td>
                   <td className="px-6 py-4">
@@ -149,7 +184,7 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               ))
             ) : (
               <tr>
-                <td colSpan={10} className="px-6 py-12 text-center text-slate-500">
+                <td colSpan={12} className="px-6 py-12 text-center text-slate-500">
                   没有找到匹配的模型。
                 </td>
               </tr>
