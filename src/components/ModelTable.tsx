@@ -1,13 +1,15 @@
 import React, { useState } from 'react';
 import { Copy, Check } from 'lucide-react';
 import { ModelInfo } from '../types';
+import { copyToClipboard } from '../lib/clipboard';
 
 interface ModelTableProps {
   models: ModelInfo[];
+  onCopyText?: (text: string, okMessage: string) => void | Promise<void>;
 }
 
-export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
-  const [copiedId, setCopiedId] = useState<string | null>(null);
+export const ModelTable: React.FC<ModelTableProps> = ({ models, onCopyText }) => {
+  const [copiedKey, setCopiedKey] = useState<string | null>(null);
 
   const calcRealMultiplier = (model: ModelInfo) => {
     // Keep calculation based on USD to maintain the 'x' scale consistency
@@ -42,15 +44,19 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
     return '-';
   };
 
-  const handleCopy = async (model: ModelInfo) => {
+  const getModelParamId = (model: ModelInfo) => {
+    return typeof model.parameters.model === 'string' ? model.parameters.model : model.id;
+  };
+
+  const copyText = async (text: string, key: string, okMessage: string) => {
     try {
-      const textToCopy = typeof model.parameters.model === 'string' 
-        ? model.parameters.model 
-        : model.id;
-        
-      await navigator.clipboard.writeText(textToCopy);
-      setCopiedId(model.id);
-      setTimeout(() => setCopiedId(null), 2000);
+      if (onCopyText) {
+        await onCopyText(text, okMessage);
+      } else {
+        await copyToClipboard(text);
+      }
+      setCopiedKey(key);
+      setTimeout(() => setCopiedKey(null), 1500);
     } catch (err) {
       console.error('Failed to copy:', err);
     }
@@ -81,18 +87,56 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
               models.map((model) => (
                 <tr key={`${model.stationTag || 'Unknown'}:${model.id}`} className="hover:bg-slate-50/50 transition-colors">
                   <td className="px-6 py-4">
-                    <span className="inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium bg-slate-100 text-slate-800">
+                    <button
+                      type="button"
+                      onClick={() =>
+                        copyText(
+                          model.stationTag || 'Unknown',
+                          `supplier:${model.stationTag || 'Unknown'}`,
+                          `已复制供应商：${model.stationTag || 'Unknown'}`
+                        )
+                      }
+                      className={`inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium border transition-colors ${
+                        copiedKey === `supplier:${model.stationTag || 'Unknown'}`
+                          ? 'bg-green-100 text-green-700 border-green-200'
+                          : 'bg-slate-100 text-slate-800 border-slate-100 hover:bg-slate-200'
+                      }`}
+                      title="点击复制供应商名称"
+                      aria-label="复制供应商名称"
+                    >
                       {model.stationTag || 'Unknown'}
-                    </span>
+                    </button>
                   </td>
                   <td className="px-6 py-4">
                      <div className="flex flex-col">
-                        <span className="font-semibold text-slate-900">{model.name}</span>
+                        <button
+                          type="button"
+                          onClick={() =>
+                            copyText(getModelParamId(model), `param:${model.id}`, `已复制模型参数：${getModelParamId(model)}`)
+                          }
+                          className="text-left font-semibold text-slate-900 hover:text-blue-600 transition-colors"
+                          title="点击复制模型参数ID"
+                          aria-label="复制模型参数ID"
+                        >
+                          {model.name}
+                        </button>
                         <span className="text-xs text-slate-400">{model.provider}</span>
                      </div>
                   </td>
                   <td className="px-6 py-4 text-xs font-mono text-slate-500">
-                    {model.id}
+                    <button
+                      type="button"
+                      onClick={() =>
+                        copyText(getModelParamId(model), `param:${model.id}`, `已复制模型参数：${getModelParamId(model)}`)
+                      }
+                      className={`text-left font-mono hover:text-blue-600 transition-colors ${
+                        copiedKey === `param:${model.id}` ? 'text-green-700' : 'text-slate-500'
+                      }`}
+                      title="点击复制模型参数ID"
+                      aria-label="复制模型参数ID"
+                    >
+                      {model.id}
+                    </button>
                   </td>
                   <td className="px-6 py-4 text-center">
                     {model.isThinking ? (
@@ -165,15 +209,17 @@ export const ModelTable: React.FC<ModelTableProps> = ({ models }) => {
                   </td>
                   <td className="px-6 py-4 text-center">
                     <button
-                      onClick={() => handleCopy(model)}
+                      onClick={() =>
+                        copyText(getModelParamId(model), `param:${model.id}`, `已复制模型参数：${getModelParamId(model)}`)
+                      }
                       className={`inline-flex items-center gap-2 px-3 py-1.5 rounded-md text-sm font-medium transition-all ${
-                        copiedId === model.id
+                        copiedKey === `param:${model.id}`
                           ? 'bg-green-100 text-green-700 border border-green-200'
                           : 'bg-white text-slate-600 border border-slate-300 hover:bg-slate-50 hover:border-blue-300 hover:text-blue-600'
                       }`}
                       title="复制模型参数ID"
                     >
-                      {copiedId === model.id ? (
+                      {copiedKey === `param:${model.id}` ? (
                         <Check size={14} />
                       ) : (
                         <Copy size={14} />

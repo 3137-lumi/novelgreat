@@ -1,12 +1,14 @@
-import React, { useEffect, useMemo, useState } from 'react';
+import React, { useEffect, useMemo, useRef, useState } from 'react';
 import { BookOpen, Server, Sparkles } from 'lucide-react';
 import { FilterBar } from '../components/FilterBar';
 import { ModelTable } from '../components/ModelTable';
+import { Toast } from '../components/Toast';
 import { DMXAPI_MODELS } from '../data/dmxapiModels';
 import { GEMINI_SUPPLIER_MODELS } from '../data/geminiSupplierModels';
 import { QIANFAN_SUPPLIER_MODELS } from '../data/qianfanSupplierModels';
 import { TONGYI_SUPPLIER_MODELS } from '../data/tongyiSupplierModels';
 import { VOLCANO_SUPPLIER_MODELS } from '../data/volcanoSupplierModels';
+import { copyToClipboard } from '../lib/clipboard';
 import { enrichDMXAPIModels } from '../lib/enrichModels';
 import { normalizeSpecialties } from '../lib/normalizeSpecialties';
 
@@ -25,6 +27,27 @@ export default function Home() {
     series: [] as string[], // Changed from string to string[]
     sortBy: 'default',
   });
+  const toastTimerRef = useRef<number | null>(null);
+  const [toast, setToast] = useState<{ message: string; tone: 'success' | 'error' } | null>(null);
+
+  const showToast = (message: string, tone: 'success' | 'error' = 'success') => {
+    const compact = message.length > 80 ? `${message.slice(0, 77)}...` : message;
+    setToast({ message: compact, tone });
+    if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    toastTimerRef.current = window.setTimeout(() => setToast(null), 1400);
+  };
+
+  useEffect(() => {
+    return () => {
+      if (toastTimerRef.current) window.clearTimeout(toastTimerRef.current);
+    };
+  }, []);
+
+  const copyAndToast = async (text: string, okMessage: string) => {
+    const ok = await copyToClipboard(text);
+    if (ok) showToast(okMessage, 'success');
+    else showToast('复制失败（浏览器权限限制）', 'error');
+  };
 
   // Inject metadata
   const allModels = useMemo(() => {
@@ -199,10 +222,12 @@ export default function Home() {
           series={modelOwners}
           filters={filters}
           onFilterChange={handleFilterChange}
+          onCopyText={copyAndToast}
         />
 
-        <ModelTable models={filteredModels} />
+        <ModelTable models={filteredModels} onCopyText={copyAndToast} />
       </div>
+      <Toast message={toast?.message ?? null} tone={toast?.tone ?? 'success'} />
     </div>
   );
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import { Filter } from 'lucide-react';
+import { Filter, Copy } from 'lucide-react';
 
 interface FilterBarProps {
   providers: string[];
@@ -10,6 +10,7 @@ interface FilterBarProps {
     sortBy: string;
   };
   onFilterChange: (key: string, value: any) => void;
+  onCopyText?: (text: string, okMessage: string) => void | Promise<void>;
 }
 
 export const FilterBar: React.FC<FilterBarProps> = ({
@@ -17,6 +18,7 @@ export const FilterBar: React.FC<FilterBarProps> = ({
   series,
   filters,
   onFilterChange,
+  onCopyText,
 }) => {
   const toggleSelection = (key: 'provider' | 'series', item: string) => {
     if (item === 'all') {
@@ -84,18 +86,34 @@ export const FilterBar: React.FC<FilterBarProps> = ({
         >
           全部
         </button>
-        {items.map(item => (
-          <button
-            key={item}
-            onClick={() => toggleSelection(stateKey, item)}
-            className={`px-3 py-1 text-sm rounded-full transition-colors border ${
-              isSelected(stateKey, item)
-                ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium'
-                : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
-            }`}
-          >
-            {item}
-          </button>
+        {items.map((item) => (
+          <div key={item} className="inline-flex items-center">
+            <button
+              onClick={() => toggleSelection(stateKey, item)}
+              className={`px-3 py-1 text-sm rounded-full transition-colors border ${
+                isSelected(stateKey, item)
+                  ? 'bg-blue-50 border-blue-200 text-blue-700 font-medium'
+                  : 'bg-white border-slate-200 text-slate-600 hover:bg-slate-50'
+              }`}
+            >
+              {item}
+            </button>
+            <button
+              type="button"
+              onClick={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                if (!onCopyText) return;
+                const title = stateKey === 'provider' ? '供应商' : '模型方';
+                onCopyText(item, `已复制${title}：${item}`);
+              }}
+              className="ml-1 inline-flex items-center justify-center rounded-full border border-slate-200 bg-white p-1 text-slate-500 hover:bg-slate-50 hover:text-blue-600"
+              title={`复制${stateKey === 'provider' ? '供应商' : '模型方'}名称`}
+              aria-label={`复制${stateKey === 'provider' ? '供应商' : '模型方'}名称`}
+            >
+              <Copy size={14} />
+            </button>
+          </div>
         ))}
       </div>
     </div>
