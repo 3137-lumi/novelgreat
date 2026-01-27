@@ -91,7 +91,7 @@ export default function Home() {
       ...m,
       specialties: normalizeSpecialties(m.specialties)
     }));
-  }, []);
+  }, [DMXAPI_MODELS, GEMINI_SUPPLIER_MODELS, TONGYI_SUPPLIER_MODELS, QIANFAN_SUPPLIER_MODELS, VOLCANO_SUPPLIER_MODELS]);
 
   const currentModels = useMemo(() => {
     if (activeTab === 'all') return allModels;
